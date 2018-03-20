@@ -9,6 +9,7 @@ NGINX ssl_dhparam
 If not already present, add an `ssl_dhparam`_ directive and a new certificate with stronger keys (which improves `forward secrecy`_). 
 The OpenSSL command may take a while to complete, so please be patient. 
 You can place the certificate into any directory you choose.
+However, in this guide we recommend ``/etc/nginx/``, just for the sake of simplicity.
 
 ::
 
@@ -20,7 +21,22 @@ Add the following directive to your common SSL configuration:
 
   ssl_dhparam /etc/nginx/dh4096.pem;
 
-Prepare a server directive for port 443 
+Add the ``/.well-known/acme-challenge`` location in your server directive for port 80
+
+.. code-block:: nginx
+
+   server {
+     listen 80 ;
+     server_name mydom.tld;
+
+     location /.well-known/acme-challenge {
+         default_type "text/plain";
+         root /var/www/letsencrypt;
+     }
+     # ...
+   }
+
+Prepare a server directive for port 443
 ---------------------------------------
 
 It is easiest, if you create a separate file for the following ``ssl_*`` directives. 
